@@ -118,6 +118,14 @@ def fetch_gamedrive(session, search_query, results_dict):
         results_dict["gamedrive"][title] = href
 
 
+def fetch_steamrip(session, search_query, results_dict):
+    response = session.get(f"https://steamrip.com/search/{search_query}").content
+    soup = BeautifulSoup(response, "html.parser")
+    entries = soup.findAll("a", attrs={"class": "all-over-thumb-link"})
+    for entry in entries:
+        results_dict["steamrip"][entry.text] = "https://steamrip.com" + entry["href"]
+
+
 def main():
     parser = ArgumentParser(
         formatter_class=RawDescriptionHelpFormatter,
@@ -167,7 +175,8 @@ def main():
         "rlsbb": {},
         "downloadha": {},
         "digitalzone": {},
-        "gamedrive": {}
+        "gamedrive": {},
+        "steamrip": {}
     }
 
     site_functions = {
@@ -179,7 +188,8 @@ def main():
         "rlsbb": fetch_rlsbb,
         "downloadha": fetch_downloadha,
         "digitalzone": fetch_digitalzone,
-        "gamedrive": fetch_gamedrive
+        "gamedrive": fetch_gamedrive,
+        "steamrip": fetch_steamrip
     }
 
     if "all" in sites:
